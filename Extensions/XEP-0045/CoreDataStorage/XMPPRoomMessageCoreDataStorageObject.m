@@ -4,6 +4,7 @@
 #warning This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
 #endif
 
+#import "User.h"
 
 @interface XMPPRoomMessageCoreDataStorageObject ()
 
@@ -46,6 +47,8 @@
 
 @dynamic primitiveMessage;
 @dynamic primitiveMessageStr;
+
+
 
 #pragma mark Transient roomJID
 

@@ -3,7 +3,7 @@
 
 #import "XMPP.h"
 #import "XMPPRoom.h"
-
+#import "User.h"
 
 @interface XMPPRoomOccupantCoreDataStorageObject : NSManagedObject <XMPPRoomOccupant>
 
@@ -13,6 +13,8 @@
 
 @property (nonatomic, strong) XMPPPresence * presence; // Transient (proper type, not on disk) 
 @property (nonatomic, strong) NSString * presenceStr;  // Shadow (binary data, written to disk)
+
+@property (nonatomic, strong) NSString * presenceTypeStr;  // Shadow (binary data, written to disk)
 
 @property (nonatomic, strong) XMPPJID * roomJID;       // Transient (proper type, not on disk)
 @property (nonatomic, strong) NSString * roomJIDStr;   // Shadow (binary data, written to disk)
@@ -29,6 +31,8 @@
 @property (nonatomic, strong) NSString * realJIDStr;   // Shadow (binary data, written to disk)
 
 @property (nonatomic, strong) NSDate * createdAt;
+
+@property (nonatomic,strong) User *user;
 
 /**
  * If a single instance of XMPPRoomCoreDataStorage is shared between multiple xmppStream's,

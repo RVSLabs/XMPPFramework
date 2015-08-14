@@ -13,6 +13,8 @@ static NSString *const XMPPMUCNamespace      = @"http://jabber.org/protocol/muc"
 static NSString *const XMPPMUCUserNamespace  = @"http://jabber.org/protocol/muc#user";
 static NSString *const XMPPMUCAdminNamespace = @"http://jabber.org/protocol/muc#admin";
 static NSString *const XMPPMUCOwnerNamespace = @"http://jabber.org/protocol/muc#owner";
+static NSString *const MEBBLELeftNamespace = @"mebble:room:left";
+static NSString *const MEBBLERoomNamespace = @"mebble:iq:room";
 
 
 @interface XMPPRoom : XMPPModule
@@ -296,7 +298,7 @@ static NSString *const XMPPMUCOwnerNamespace = @"http://jabber.org/protocol/muc#
 /**
  * Invoked when a message is received.
  * The occupant parameter may be nil if the message came directly from the room, or from a non-occupant.
-**/
+ **/
 - (void)xmppRoom:(XMPPRoom *)sender didReceiveMessage:(XMPPMessage *)message fromOccupant:(XMPPJID *)occupantJID;
 
 - (void)xmppRoom:(XMPPRoom *)sender didFetchBanList:(NSArray *)items;

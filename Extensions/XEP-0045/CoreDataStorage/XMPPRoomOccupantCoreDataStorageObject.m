@@ -40,7 +40,8 @@
 @dynamic realJIDStr, primitiveRealJIDStr;
 @dynamic createdAt;
 @dynamic streamBareJidStr;
-
+@dynamic user;
+@dynamic presenceTypeStr;
 #pragma mark Transient presence
 
 - (XMPPPresence *)presence

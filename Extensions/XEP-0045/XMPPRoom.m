@@ -117,7 +117,7 @@ enum XMPPRoomState
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This method may optionally be used by XMPPRosterStorage classes (method declared in XMPPRosterPrivate.h)
+ * This method may optionally be use`d by XMPPRosterStorage classes (method declared in XMPPRosterPrivate.h)
 **/
 - (dispatch_queue_t)moduleQueue
 {
@@ -752,7 +752,10 @@ enum XMPPRoomState
 		XMPPPresence *presence = [XMPPPresence presence];
 		[presence addAttributeWithName:@"to" stringValue:[myRoomJID full]];
 		[presence addAttributeWithName:@"type" stringValue:@"unavailable"];
-		
+		 
+        
+        NSXMLElement *x = [NSXMLElement elementWithName:@"x" xmlns:MEBBLELeftNamespace];
+        [presence addChild:x];
 		[xmppStream sendElement:presence];
 		
 		state &= ~kXMPPRoomStateJoining;
@@ -1032,7 +1035,7 @@ enum XMPPRoomState
 				
 				if ([xmppRoomStorage respondsToSelector:@selector(handleDidJoinRoom:withNickname:)])
 					[xmppRoomStorage handleDidJoinRoom:self withNickname:myNickname];
-				[multicastDelegate xmppRoomDidJoin:self];
+				    [multicastDelegate xmppRoomDidJoin:self];
 			}
 		}
 		else if (isUnavailable && !isNicknameChange)

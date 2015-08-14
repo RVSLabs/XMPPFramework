@@ -2,6 +2,7 @@
 #import "XMPPCoreDataStorageProtected.h"
 #import "NSXMLElement+XEP_0203.h"
 #import "XMPPLogging.h"
+#import "User.h"
 
 #if ! __has_feature(objc_arc)
 #warning This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
@@ -16,6 +17,8 @@
 
 #define AssertPrivateQueue() \
             NSAssert(dispatch_get_specific(storageQueueTag), @"Private method: MUST run on storageQueue");
+
+
 
 @interface XMPPRoomCoreDataStorage ()
 {
@@ -621,7 +624,7 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	// Add to database
 	
 	XMPPRoomMessageCoreDataStorageObject *roomMessage = (XMPPRoomMessageCoreDataStorageObject *)
-	    [[NSManagedObject alloc] initWithEntity:messageEntity insertIntoManagedObjectContext:nil];
+	    [[NSManagedObject alloc] initWithEntity:messageEntity insertIntoManagedObjectContext:moc];
 	
 	roomMessage.message = message;
 	roomMessage.roomJID = roomJID;
@@ -633,6 +636,33 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	roomMessage.isFromMe = isOutgoing;
 	roomMessage.streamBareJidStr = streamBareJidStr;
 	
+    NSEntityDescription *entityDescription = [NSEntityDescription
+                                              entityForName:@"XMPPRoomOccupantCoreDataStorageObject" inManagedObjectContext:moc];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:entityDescription];
+    
+    // Set example predicate and sort orderings...
+   
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                              @"jidStr = %@", roomMessage.jidStr];
+    [request setPredicate:predicate];
+    
+ 
+    
+    NSError *error;
+    NSArray *array = [moc executeFetchRequest:request error:&error];
+    
+    
+    
+    if ([array count]>0)
+    {
+        XMPPRoomOccupantCoreDataStorageObject *oc=(XMPPRoomOccupantCoreDataStorageObject*)[array objectAtIndex:0];
+        roomMessage.user=oc.user;
+        // Deal with error...
+    }
+    
+    
+    
 	[moc insertObject:roomMessage];      // Hook if subclassing XMPPRoomMessageCoreDataStorageObject (awakeFromInsert)
 	[self didInsertMessage:roomMessage]; // Hook if subclassing XMPPRoomCoreDataStorage
 }
@@ -683,6 +713,9 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	NSString *role = nil;
 	NSString *affiliation = nil;
 	XMPPJID *realJID = nil;
+    
+    NSString *realName;
+    NSString *avatarImageURL;
 	
 	NSXMLElement *x = [presence elementForName:@"x" xmlns:@"http://jabber.org/protocol/muc#user"];
 	NSXMLElement *item = [x elementForName:@"item"];
@@ -697,6 +730,16 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 			realJID = [XMPPJID jidWithString:realJIDStr];
 		}
 	}
+    
+    
+    NSXMLElement *xmeb = [presence elementForName:@"x" xmlns:@"http://mebble.com#user"];
+    NSXMLElement *itemmeb = [xmeb elementForName:@"item"];
+    if (itemmeb)
+    {
+        avatarImageURL = [[itemmeb attributeStringValueForName:@"image"] lowercaseString];
+        realName = [itemmeb attributeStringValueForName:@"name"];
+
+    }
 	
 	// Add to database
 	
@@ -706,7 +749,7 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	NSEntityDescription *occupantEntity = [self occupantEntity:moc];
 	
 	XMPPRoomOccupantCoreDataStorageObject *occupant = (XMPPRoomOccupantCoreDataStorageObject *)
-	    [[NSManagedObject alloc] initWithEntity:occupantEntity insertIntoManagedObjectContext:nil];
+	    [[NSManagedObject alloc] initWithEntity:occupantEntity insertIntoManagedObjectContext:moc];
 	
 	occupant.presence = presence;
 	occupant.roomJID = roomJID;
@@ -717,6 +760,45 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	occupant.realJID = realJID;
 	occupant.createdAt = [NSDate date];
 	occupant.streamBareJidStr = streamBareJidStr;
+    occupant.presenceTypeStr = [presence type];
+    
+    
+    User *user = [NSEntityDescription
+                                    insertNewObjectForEntityForName:@"User"
+                                    inManagedObjectContext:moc];
+    user.realName=realName;
+    user.avatarImageURL=avatarImageURL;
+    occupant.user=user;
+    NSArray *colors = @[ @"1abc9c",
+                         @"2ecc71",
+                         @"3498db",
+                         @"9b59b6",
+                         @"34495e",
+                         @"16a085",
+                         @"27ae60",
+                         @"2980b9",
+                         @"8e44ad",
+                         @"2c3e50",
+                         @"f1c40f",
+                         @"e67e22",
+                         @"e74c3c",
+                         @"ecf0f1",
+                         @"95a5a6",
+                         @"f39c12",
+                         @"d35400",
+                         @"c0392b",
+                         @"bdc3c7",
+                         @"7f8c8d"];
+    
+    occupant.user.color=colors[arc4random_uniform(colors.count)];
+    
+   
+
+    /*
+    occupant.realName = realName;
+    occupant.avatarImageURL = avatarImageURL;
+    */
+
 	
 	[moc insertObject:occupant];       // Hook if subclassing XMPPRoomOccupantCoreDataStorageObject (awakeFromInsert)
 	[self didInsertOccupant:occupant]; // Hook if subclassing XMPPRoomCoreDataStorage
@@ -739,6 +821,10 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	NSString *affiliation = nil;
 	XMPPJID *realJID = nil;
 	
+    
+    NSString *realName;
+    NSString *avatarImageURL;
+    
 	NSXMLElement *x = [presence elementForName:@"x" xmlns:@"http://jabber.org/protocol/muc#user"];
 	NSXMLElement *item = [x elementForName:@"item"];
 	if (item)
@@ -752,6 +838,16 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 			realJID = [XMPPJID jidWithString:realJIDStr];
 		}
 	}
+    
+    NSXMLElement *xmeb = [presence elementForName:@"x" xmlns:@"http://mebble.com#user"];
+    NSXMLElement *itemmeb = [xmeb elementForName:@"item"];
+    if (itemmeb)
+    {
+        avatarImageURL = [[itemmeb attributeStringValueForName:@"image"] lowercaseString];
+        realName = [itemmeb attributeStringValueForName:@"name"];
+        
+    }
+
 	
 	// Update database
 	
@@ -759,7 +855,11 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	occupant.role = role;
 	occupant.affiliation = affiliation;
 	occupant.realJID = realJID;
-	
+    occupant.presenceTypeStr = [presence type];
+
+    occupant.user.realName=realName;
+    occupant.user.avatarImageURL=avatarImageURL;
+
 	[self didUpdateOccupant:occupant]; // Hook if subclassing XMPPRoomCoreDataStorage
 }
 
@@ -772,8 +872,9 @@ static XMPPRoomCoreDataStorage *sharedInstance;
                 stream:(XMPPStream *)stream
 {
 	// Delete from database
-	
+	//TO-DO MEBBLE: Set Flag.
 	[[occupant managedObjectContext] deleteObject:occupant];
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -919,10 +1020,11 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 		if ([[presence type] isEqualToString:@"unavailable"])
 		{
 			// Remove occupant record from database
-			
 			if (occupant)
 			{
-				[self removeOccupant:occupant withPresence:presence room:room stream:xmppStream];
+                //MEBBLE CUSTOMIZATION:
+				//[self removeOccupant:occupant withPresence:presence room:room stream:xmppStream];
+                [self updateOccupant:occupant withPresence:presence room:room stream:xmppStream];
 			}
 		}
 		else

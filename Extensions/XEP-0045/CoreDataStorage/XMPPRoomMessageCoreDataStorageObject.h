@@ -3,7 +3,7 @@
 
 #import "XMPP.h"
 #import "XMPPRoom.h"
-
+#import "User.h"
 
 @interface XMPPRoomMessageCoreDataStorageObject : NSManagedObject <XMPPRoomMessage>
 
@@ -28,6 +28,7 @@
 
 @property (nonatomic, assign) BOOL isFromMe;
 @property (nonatomic, strong) NSNumber * fromMe;
+@property (nonatomic, strong) User *user;
 
 /**
  * The 'type' property can be used to inject event messages.
