@@ -968,28 +968,58 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	NSPredicate *predicate;
 	if (xmppStream)
 	{
-		NSString *streamBareJidStr = [[self myJIDForXMPPStream:xmppStream] bare];
-		
-		NSString *predicateFormat = @"jidStr == %@ AND streamBareJidStr == %@";
-		predicate = [NSPredicate predicateWithFormat:predicateFormat, jid, streamBareJidStr];
+        NSString *streamBareJidStr = [[self myJIDForXMPPStream:xmppStream] bare];
+        
+        NSString *predicateFormat = @"jidStr == %@ AND streamBareJidStr == %@";
+        predicate = [NSPredicate predicateWithFormat:predicateFormat, jid.full, streamBareJidStr];
 	}
 	else
 	{
-		predicate = [NSPredicate predicateWithFormat:@"jidStr == %@", jid];
+		predicate = [NSPredicate predicateWithFormat:@"jidStr == %@", jid.full];
 	}
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:predicate];
+    //[fetchRequest setFetchBatchSize:1];
+    
+    NSError *error = nil;
+    NSArray *results = [moc executeFetchRequest:fetchRequest error:&error];
+    
+    
 	
-	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-	[fetchRequest setEntity:entity];
-	[fetchRequest setPredicate:predicate];
-	[fetchRequest setFetchBatchSize:1];
+	NSFetchRequest *fetchAllRequest = [[NSFetchRequest alloc] init];
+	[fetchAllRequest setEntity:entity];
+
 	
-	NSError *error = nil;
-	NSArray *results = [moc executeFetchRequest:fetchRequest error:&error];
-	
+	NSError *errorAll = nil;
+	NSArray *allItems = [moc executeFetchRequest:fetchAllRequest error:&errorAll];
+    
+    NSLog(@"TODOS OS OCUPANTES:");
+	for (XMPPRoomOccupantCoreDataStorageObject *r in allItems)
+    {
+        NSLog(@"jidStr=%@ and streamBareJidStr==%@",r.jidStr,r.streamBareJidStr);
+        
+    }
+    
+    
+    if([results lastObject]==nil)
+    {
+        
+    }
+    
 	if (error)
 	{
 		XMPPLogWarn(@"%@: %@ - fetch error: %@", THIS_FILE, THIS_METHOD, error);
 	}
+    
+    NSLog(@"PREDICATE:%@",predicate);
+    NSLog(@"RESULTADO DO FETCH:%@",results);
+    for (XMPPRoomOccupantCoreDataStorageObject *r in results)
+    {
+        NSLog(@"jidStr==%@ and streamBareJidStr==%@",r.jidStr,r.streamBareJidStr);
+        
+    }
 	
 	return (XMPPRoomOccupantCoreDataStorageObject *)[results lastObject];
 }
