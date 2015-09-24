@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14E46" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8195" systemVersion="14F27" minimumToolsVersion="Automatic">
     <entity name="User" representedClassName="User" syncable="YES">
         <attribute name="avatarImageURL" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="color" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="realName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="occupantDataStore" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="XMPPRoomOccupantCoreDataStorageObject" inverseName="user" inverseEntity="XMPPRoomOccupantCoreDataStorageObject" syncable="YES"/>
+        <relationship name="roomMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="XMPPRoomMessageCoreDataStorageObject" inverseName="user" inverseEntity="XMPPRoomMessageCoreDataStorageObject" syncable="YES"/>
     </entity>
     <entity name="XMPPRoomMessageCoreDataStorageObject" representedClassName="XMPPRoomMessageCoreDataStorageObject" syncable="YES">
         <attribute name="body" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
@@ -19,12 +21,12 @@
         <attribute name="roomJIDStr" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="streamBareJidStr" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="type" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="roomMessages" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="XMPPRoomOccupantCoreDataStorageObject" representedClassName="XMPPRoomOccupantCoreDataStorageObject" syncable="YES">
         <attribute name="affiliation" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="avatarImageURL" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="createdAt" attributeType="Date" defaultDateTimeInterval="0" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="createdAt" attributeType="Date" defaultDateTimeInterval="0" indexed="YES" syncable="YES"/>
         <attribute name="jid" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="jidStr" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="nickname" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
@@ -38,11 +40,11 @@
         <attribute name="roomJID" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="roomJIDStr" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="streamBareJidStr" attributeType="String" indexed="YES" syncable="YES"/>
-        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="occupantDataStore" inverseEntity="User" syncable="YES"/>
     </entity>
     <elements>
-        <element name="User" positionX="135" positionY="180" width="144" height="88"/>
-        <element name="XMPPRoomMessageCoreDataStorageObject" positionX="360" positionY="180" width="225" height="253"/>
+        <element name="User" positionX="135" positionY="171" width="144" height="118"/>
+        <element name="XMPPRoomMessageCoreDataStorageObject" positionX="360" positionY="170" width="225" height="253"/>
         <element name="XMPPRoomOccupantCoreDataStorageObject" positionX="-216" positionY="171" width="261" height="298"/>
     </elements>
 </model>
