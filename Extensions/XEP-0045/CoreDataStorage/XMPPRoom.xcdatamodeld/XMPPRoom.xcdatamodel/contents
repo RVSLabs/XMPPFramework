@@ -40,7 +40,7 @@
         <attribute name="roomJID" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="roomJIDStr" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="streamBareJidStr" attributeType="String" indexed="YES" syncable="YES"/>
-        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="occupantDataStore" inverseEntity="User" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="User" inverseName="occupantDataStore" inverseEntity="User" syncable="YES"/>
     </entity>
     <elements>
         <element name="User" positionX="135" positionY="171" width="144" height="118"/>

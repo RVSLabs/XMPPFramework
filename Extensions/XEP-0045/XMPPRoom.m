@@ -96,7 +96,7 @@ enum XMPPRoomState
 		
 		if (self.isJoined)
 		{
-			[self leaveRoom];
+			//[self leaveRoom];
 		}
 		
 		[responseTracker removeAllIDs];
@@ -281,7 +281,7 @@ enum XMPPRoomState
 		//     <password>passwd</password>
 		//   </x>
 		// </presence>
-		
+		/*
 		NSXMLElement *x = [NSXMLElement elementWithName:@"x" xmlns:XMPPMUCNamespace];
 		if (history)
 		{
@@ -296,7 +296,19 @@ enum XMPPRoomState
 		[presence addChild:x];
 		
 		[xmppStream sendElement:presence];
-		
+		*/
+        
+        //<iq from='user3@localhost/web' to='31@localChat.localhost' type='set' id='9:web' xmlns='jabber:client'>
+        //<query xmlns='mebble:room:in'/>
+        //</iq>
+        
+        
+        NSXMLElement *query = [NSXMLElement elementWithName:@"query" xmlns:MEBBLERoomIn];
+        XMPPIQ *iq = [XMPPIQ iqWithType:@"set" to:myRoomJID elementID:nil child:query];
+        
+        [xmppStream sendElement:iq];
+
+        
 		state |= kXMPPRoomStateJoining;
 		
 	}};

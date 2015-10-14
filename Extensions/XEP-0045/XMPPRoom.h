@@ -15,6 +15,13 @@ static NSString *const XMPPMUCAdminNamespace = @"http://jabber.org/protocol/muc#
 static NSString *const XMPPMUCOwnerNamespace = @"http://jabber.org/protocol/muc#owner";
 static NSString *const MEBBLELeftNamespace = @"mebble:room:left";
 static NSString *const MEBBLERoomNamespace = @"mebble:iq:room";
+static NSString *const MEBBLERoomForm = @"mebble:x:room_form";
+static NSString *const MEBBLERoomIn = @"mebble:room:in";
+static NSString *const MEBBLEUser = @"mebble:user";
+
+
+
+
 
 
 @interface XMPPRoom : XMPPModule

@@ -732,7 +732,7 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	}
     
     
-    NSXMLElement *xmeb = [presence elementForName:@"x" xmlns:@"http://mebble.com#user"];
+    NSXMLElement *xmeb = [presence elementForName:@"x" xmlns:MEBBLEUser];
     NSXMLElement *itemmeb = [xmeb elementForName:@"item"];
     if (itemmeb)
     {
@@ -789,7 +789,7 @@ static XMPPRoomCoreDataStorage *sharedInstance;
                          @"c0392b",
                          @"bdc3c7",
                          @"7f8c8d"];
-    
+
     occupant.user.color=colors[arc4random_uniform(colors.count)];
     
    
@@ -839,7 +839,7 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 		}
 	}
     
-    NSXMLElement *xmeb = [presence elementForName:@"x" xmlns:@"http://mebble.com#user"];
+    NSXMLElement *xmeb = [presence elementForName:@"x" xmlns:MEBBLEUser];
     NSXMLElement *itemmeb = [xmeb elementForName:@"item"];
     if (itemmeb)
     {
