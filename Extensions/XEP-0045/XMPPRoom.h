@@ -18,6 +18,8 @@ static NSString *const MEBBLERoomNamespace = @"mebble:iq:room";
 static NSString *const MEBBLERoomForm = @"mebble:x:room_form";
 static NSString *const MEBBLERoomIn = @"mebble:room:in";
 static NSString *const MEBBLEUser = @"mebble:user";
+static NSString *const MEBBLEIQUser = @"mebble:iq:user";
+
 
 
 
